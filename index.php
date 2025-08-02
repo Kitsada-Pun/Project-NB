@@ -466,64 +466,6 @@ $condb->close();
         </div>
     </section>
 
-    <!-- <section id="client-job-requests" class="py-12 md:py-16 bg-white">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 md:mb-10">
-                <h2
-                    class="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800 mb-4 sm:mb-0 text-center sm:text-left text-gradient">
-                    รายการร้องขอจากผู้ว่าจ้าง</h2>
-                <a href="job_listings.php?type=requests"
-                    class="btn-secondary px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium text-sm md:text-base">
-                    ดูทั้งหมด <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-
-            <?php if (empty($client_job_requests)) : ?>
-            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg relative text-center">
-                <span class="block sm:inline">ยังไม่มีงานร้องขอจากผู้ว่าจ้างในขณะนี้</span>
-            </div>
-            <?php else : ?>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                <?php foreach ($client_job_requests as $request) : ?>
-                <div class="card-item animate-card-appear">
-                    <img src="dist/img/img02.png"
-    alt="งานที่ร้องขอ: <?= htmlspecialchars($request['title']) ?>" class="card-image">
-                    <div class="p-4 md:p-6 flex-grow flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-lg md:text-xl font-semibold text-gray-900 mb-1 md:mb-2 line-clamp-2">
-                                <?= htmlspecialchars($request['title']) ?></h3>
-                            <p class="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">โดย: <span
-                                    class="font-medium text-blue-700"><?= htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) ?></span>
-                            </p>
-                            <p class="text-xs md:text-sm text-gray-500 mb-2 md:mb-4">
-                                <i class="fas fa-tag mr-1 text-blue-500"></i> หมวดหมู่: <span
-                                    class="font-normal"><?= htmlspecialchars($request['category_name'] ?? 'ไม่ระบุ') ?></span>
-                            </p>
-                            <p class="text-sm md:text-base text-gray-700 mb-2 md:mb-4 line-clamp-3 font-light">
-                                <?= htmlspecialchars($request['description']) ?></p>
-                        </div>
-                        <div class="mt-2 md:mt-4">
-                            <p class="text-base md:text-lg font-semibold text-purple-700 mb-1 md:mb-2">งบประมาณ:
-                                <?= htmlspecialchars($request['budget'] ?? 'ไม่ระบุ') ?></p>
-                            <?php if (!empty($request['deadline'])) : ?>
-                            <p class="text-xs text-gray-500 mb-2">กำหนดส่ง: <span
-                                    class="font-light"><?= date('d M Y', strtotime($request['deadline'])) ?></span></p>
-                            <?php endif; ?>
-                            <p class="text-xs text-gray-500 mb-2 md:mb-4">ประกาศเมื่อ: <span
-                                    class="font-light"><?= date('d M Y', strtotime($request['posted_date'])) ?></span>
-                            </p>
-                            <a href="job_detail.php?id=<?= $request['request_id'] ?>&type=request"
-                                class="btn-primary px-4 py-2 sm:px-5 sm:py-2 rounded-lg font-medium shadow-lg">
-                                ดูรายละเอียด <i class="fas fa-arrow-right ml-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-        </div>
-    </section> -->
 
     <section id="features" class="py-12 md:py-16 bg-gradient-to-br from-gray-50 to-blue-50">
         <div class="container mx-auto px-4 md:px-6 text-center">
