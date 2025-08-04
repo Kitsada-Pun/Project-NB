@@ -159,6 +159,14 @@ hr.sidebar-divider {
                     </a>
                 </li>
 
+                <!-- <li class="nav-item">
+                    <a href="manage_editpost.php"
+                        class="nav-link <?= $activePage == 'manage_editpost.php' ? 'active' : ''; ?>">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>จัดการประกาศงาน</p>
+                    </a>
+                </li> -->
+
                 <li class="nav-item">
                     <a href="how_to_use.php" class="nav-link <?= $activePage == 'how_to_use.php' ? 'active' : ''; ?>">
                         <i class="nav-icon fas fa-book"></i>

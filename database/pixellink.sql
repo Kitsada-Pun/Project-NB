@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2025 at 05:27 PM
+-- Generation Time: Aug 04, 2025 at 06:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -162,13 +162,7 @@ INSERT INTO `job_postings` (`post_id`, `designer_id`, `title`, `description`, `c
 (21, 2, 'ออกแบบ UI เว็บไซต์', 'ดีไซน์หน้าเว็บให้สวยงาม น่าใช้งาน และตอบโจทย์ UX', 5, '10,000–25,000 บาท', '2025-07-10 16:43:43', 'active', 0, NULL),
 (22, 4, 'พัฒนาเว็บไซต์ด้วย HTML/CSS', 'รับสร้างเว็บไซต์พื้นฐานด้วย HTML/CSS ตามแบบที่ลูกค้าต้องการ', 6, '8,000–20,000 บาท', '2025-07-10 16:43:43', 'active', 0, NULL),
 (23, 2, 'ออกแบบป้ายต่างๆ', 'รับออกแบบป้าย ทันสมัย,สีสันสดสวย,คุ้มราคา100%', 1, '500–2,000 บาท', '2025-07-23 17:24:13', 'active', 0, NULL),
-(24, 2, 'รับวาดปกหนังสือ', 'ได้งานไวมากกกกกกกกกกกกกกกกก', 1, '1,500-3000 บาท', '2025-07-25 17:47:41', 'active', 0, NULL),
-(35, 2, 'TEST', 'TEST', 1, '1,500', '2025-07-26 18:24:35', 'active', 0, 22),
-(36, 2, 'yyyyyyyyyyyyyyy', 'yyy', 5, 'yyyy', '2025-07-30 07:05:28', 'active', 0, NULL),
-(37, 2, 'aaaaaaaa', 'aaaaaaaaaaaaaaaa', 4, 'aaaaaaaaa', '2025-07-30 07:31:08', 'active', 0, 23),
-(38, 2, 'เเเเเเเเเเเ', 'เเเเเเเเเเเเเเเเเเเเ', 4, 'เเเเเเเเเเเ', '2025-07-30 07:49:20', 'active', 0, 24),
-(39, 2, 'สสสสสสสสสสสสสสส', 'สสสสสสสสสสสสสสสสส', 1, 'สสสสสสสสสสส', '2025-07-30 08:13:33', 'active', 0, 25),
-(40, 2, 'tttttttttttt', 'ttttttttttt', 4, '55555', '2025-07-30 14:09:20', 'active', 0, 26);
+(24, 2, 'รับวาดปกหนังสือ', 'ได้งานไวมากกกกกกกกกกกกกกกกก', 1, '1,500-3000 บาท', '2025-07-25 17:47:41', 'active', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -470,7 +464,25 @@ INSERT INTO `logs` (`log_id`, `user_id`, `action`, `details`, `ip_address`, `tim
 (278, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-07-30 21:08:49'),
 (279, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-07-30 21:10:03'),
 (280, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-07-30 21:30:03'),
-(281, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-07-30 22:26:59');
+(281, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-07-30 22:26:59'),
+(282, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-07-30 22:43:23'),
+(283, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 21:03:18'),
+(284, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 21:33:11'),
+(285, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 21:33:29'),
+(286, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 21:50:31'),
+(287, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 22:00:03'),
+(288, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 22:02:02'),
+(289, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 22:10:51'),
+(290, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 22:13:02'),
+(291, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 22:14:26'),
+(292, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 22:31:11'),
+(293, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 23:29:20'),
+(294, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 23:45:46'),
+(295, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-02 23:50:58'),
+(296, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-03 00:02:31'),
+(297, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-03 00:28:45'),
+(298, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-04 15:42:09'),
+(299, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-04 22:06:26');
 
 -- --------------------------------------------------------
 
@@ -519,7 +531,7 @@ CREATE TABLE `profiles` (
 --
 
 INSERT INTO `profiles` (`profile_id`, `user_id`, `address`, `company_name`, `bio`, `portfolio_url`, `skills`, `profile_picture_url`) VALUES
-(1, 2, '123 Design St, BKK', NULL, 'Passionate UI/UX designer.', 'https://www.twitch.tv/', 'UX/UI, Figma, Photoshop, AI', '/uploads/jane.jpg'),
+(1, 2, '123 Design St, BKK', 'PixelLink co. ltd', 'Passionate UI/UX designer and dev.', 'https://www.twitch.tv/', 'UX/UI, Figma, Photoshop, AI,Canva', '../uploads/profile_pictures/profile_2_1754317184.jpg'),
 (2, 3, '456 Business Rd, Nonthaburi', 'Acme Corp', NULL, NULL, NULL, '/uploads/bob.jpg'),
 (3, 4, '789 Art Ave, Chiang Mai', NULL, 'Junior graphic designer looking for freelance work.', 'anna.artstation.com', 'Photoshop, Illustrator', '/uploads/anna.png'),
 (4, 5, '101 Tech Tower, Bangkok', 'Tech Corp', NULL, NULL, NULL, NULL);
@@ -647,11 +659,12 @@ CREATE TABLE `uploaded_files` (
 --
 
 INSERT INTO `uploaded_files` (`file_id`, `contract_id`, `job_post_id`, `uploader_id`, `file_name`, `file_path`, `uploaded_at`, `file_size`, `uploaded_by_user_id`, `file_type`, `uploaded_date`) VALUES
-(22, NULL, NULL, 2, '', '../uploads/job_images/job_img_68851d6311505.png', '2025-07-26 18:24:35', 27410, 2, 'image/png', '2025-07-27 01:24:35'),
 (23, NULL, NULL, 2, '', '../uploads/job_images/job_img_6889ca3c8f767.jpg', '2025-07-30 07:31:08', 314895, 2, 'image/jpeg', '2025-07-30 14:31:08'),
 (24, NULL, NULL, 2, '', '../uploads/job_images/job_img_6889ce803fae4.jpg', '2025-07-30 07:49:20', 314895, 2, 'image/jpeg', '2025-07-30 14:49:20'),
 (25, NULL, NULL, 2, 'job_img_6889d42d330ec1753863213.jpg', '../uploads/job_images/job_img_6889d42d330ec1753863213.jpg', '2025-07-30 08:13:33', 568822, NULL, 'image/jpeg', '2025-07-30 15:13:33'),
-(26, NULL, NULL, 2, 'job_img_688a2790a325c1753884560.png', '../uploads/job_images/job_img_688a2790a325c1753884560.png', '2025-07-30 14:09:20', 206400, NULL, 'image/png', '2025-07-30 21:09:20');
+(26, NULL, NULL, 2, 'job_img_688a2790a325c1753884560.png', '../uploads/job_images/job_img_688a2790a325c1753884560.png', '2025-07-30 14:09:20', 206400, NULL, 'image/png', '2025-07-30 21:09:20'),
+(27, NULL, NULL, 2, 'job_img_689075243fba91754297636.png', '../uploads/job_images/job_img_689075243fba91754297636.png', '2025-08-04 08:53:56', 206400, NULL, 'image/png', '2025-08-04 15:53:56'),
+(29, NULL, NULL, 2, 'job_img_6890a9c2375571754311106.jpg', '../uploads/job_images/job_img_6890a9c2375571754311106.jpg', '2025-08-04 12:38:26', 295791, NULL, 'image/jpeg', '2025-08-04 19:38:26');
 
 -- --------------------------------------------------------
 
@@ -840,13 +853,13 @@ ALTER TABLE `job_categories`
 -- AUTO_INCREMENT for table `job_postings`
 --
 ALTER TABLE `job_postings`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=282;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=300;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -888,7 +901,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `uploaded_files`
 --
 ALTER TABLE `uploaded_files`
-  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `users`
