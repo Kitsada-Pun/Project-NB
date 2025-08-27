@@ -1,18 +1,18 @@
 <?php
-// connect.php หรือ config.php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "pixellink";
+$condb = new mysqli($servername, $username, $password, $dbname);
+if ($condb->connect_error) {
+    die("Connection failed: " . $condb->connect_error);
+}
+$condb->set_charset("utf8mb4");
+
 define('DB_SERVER', 'localhost');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
-define('DB_NAME', 'pixellink'); // ตรวจสอบให้แน่ใจว่าชื่อฐานข้อมูลถูกต้อง
-
-// กำหนด ROOT_PATH
-// ตัวอย่าง: ถ้าโปรเจกต์ของคุณอยู่ใน http://localhost/freelance_platform/
-// และไฟล์ PHP อยู่ใน http://localhost/freelance_platform/admin/
-// ROOT_PATH ควรจะเป็น http://localhost/freelance_platform/
-// *** คุณต้องเปลี่ยน 'your_project_folder' เป็นชื่อโฟลเดอร์โปรเจกต์ของคุณจริงๆ ***
-// define('ROOT_PATH', 'http://localhost/your_project_folder/'); 
-
-// เชื่อมต่อฐานข้อมูล
+define('DB_NAME', 'pixellink');
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
 // ตรวจสอบการเชื่อมต่อ
@@ -23,3 +23,4 @@ if ($conn->connect_error) {
 }
 $conn->set_charset("utf8mb4"); // ตั้งค่า charset เป็น utf8mb4 เพื่อรองรับภาษาไทยและอิโมจิได้สมบูรณ์ยิ่งขึ้น
 ?>
+</div>
