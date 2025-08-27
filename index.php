@@ -50,12 +50,13 @@ $sql_job_postings = "SELECT
                         jp.posted_date,
                         u.first_name,
                         u.last_name,
+                        u.username, -- << เพิ่มบรรทัดนี้เพื่อดึง username
                         jc.category_name,
-                        uf.file_path AS job_image_path -- << เพิ่มบรรทัดนี้
+                        uf.file_path AS job_image_path
                     FROM job_postings AS jp
                     JOIN users AS u ON jp.designer_id = u.user_id
                     LEFT JOIN job_categories AS jc ON jp.category_id = jc.category_id
-                    LEFT JOIN uploaded_files AS uf ON jp.main_image_id = uf.file_id -- << เพิ่มบรรทัดนี้
+                    LEFT JOIN uploaded_files AS uf ON jp.main_image_id = uf.file_id
                     WHERE jp.status = 'active'
                     ORDER BY jp.posted_date DESC
                     LIMIT 12";
@@ -88,258 +89,55 @@ $condb->close();
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
 
     <style>
-    * {
-        font-family: 'Kanit', sans-serif;
-        font-style: normal;
-        font-weight: 400;
-        /* Apply the specified font weight */
-    }
+    * { font-family: 'Kanit', sans-serif; font-style: normal; font-weight: 400; }
+body { background: linear-gradient(135deg, #f0f4f8 0%, #e8edf3 100%); color: #2c3e50; overflow-x: hidden; }
+.navbar { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+.btn-primary { background: linear-gradient(45deg, #0a5f97 0%, #0d96d2 100%); color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(13, 150, 210, 0.3); }
+.btn-primary:hover { background: linear-gradient(45deg, #0d96d2 0%, #0a5f97 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13, 150, 210, 0.5); }
+.btn-secondary { background-color: #6c757d; color: white; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2); }
+.btn-secondary:hover { background-color: #5a6268; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4); }
+.text-gradient { background: linear-gradient(45deg, #0a5f97, #0d96d2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.text-gradient-light { background: linear-gradient(45deg, #87ceeb, #add8e6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+.pixellink-logo { font-weight: 700; font-size: 2.25rem; background: linear-gradient(45deg, #0a5f97, #0d96d2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.pixellink-logo b { color: #0d96d2; }
+.card-item { background: white; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.3s ease; display: flex; flex-direction: column; }
+.card-item:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
+.card-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+.hero-section { background-image: url('dist/img/cover.png'); background-size: cover; background-position: center; position: relative; z-index: 1; padding: 8rem 0; }
+.hero-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); z-index: -1; }
+.feature-icon { color: #0d96d2; transition: transform 0.3s ease; }
+.card-item:hover .feature-icon { transform: translateY(-3px); }
 
-    body {
-        background: linear-gradient(135deg, #f0f4f8 0%, #e8edf3 100%);
-        /* Soft, professional gradient */
-        color: #2c3e50;
-        /* Darker, more formal text color */
-        overflow-x: hidden;
-    }
+@media (max-width: 768px) {
+  .hero-section { padding: 6rem 0; }
+  .hero-section h1 { font-size: 2.8rem; }
+  .hero-section p { font-size: 1rem; }
+  .hero-section .space-x-0 { flex-direction: column; gap: 1rem; }
+  .hero-section .btn-primary, .hero-section .btn-secondary { width: 90%; max-width: none; font-size: 0.9rem; padding: 0.75rem 1.25rem; }
+  .pixellink-logo { font-size: 1.6rem; }
+  .navbar .px-5 { padding-left: 0.5rem; padding-right: 0.5rem; }
+  .navbar .py-2 { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  h2 { font-size: 1.8rem; }
+  .card-item { border-radius: 0.75rem; padding: 1rem; }
+  .card-image { height: 160px; }
+  .sm\:grid-cols-2 { grid-template-columns: 1fr; }
+  .flex-col.sm\:flex-row { flex-direction: column; }
+  .flex-col.sm\:flex-row>*:not(:last-child) { margin-bottom: 1rem; }
+  .md\:mb-0 { margin-bottom: 1rem; }
+  .footer-links { flex-direction: column; gap: 0.5rem; }
+}
 
-    .navbar {
-        background-color: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        /* Very subtle bottom border */
-    }
-
-    .btn-primary {
-        background: linear-gradient(45deg, #0a5f97 0%, #0d96d2 100%);
-        /* Deep Blue to Sky Blue */
-        color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(13, 150, 210, 0.3);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(45deg, #0d96d2 0%, #0a5f97 100%);
-        /* Invert gradient on hover */
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(13, 150, 210, 0.5);
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        /* Muted Grey */
-        color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2);
-    }
-
-    .btn-secondary:hover {
-        background-color: #5a6268;
-        /* Darker grey on hover */
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
-    }
-
-    .text-gradient {
-        background: linear-gradient(45deg, #0a5f97, #0d96d2);
-        /* Deep Blue to Sky Blue */
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .text-gradient-light {
-        background: linear-gradient(45deg, #87ceeb, #add8e6);
-        /* Light Sky Blue */
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .pixellink-logo {
-        font-weight: 700;
-        /* Semi-bold for formality */
-        font-size: 2.25rem;
-        /* text-4xl */
-        background: linear-gradient(45deg, #0a5f97, #0d96d2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .pixellink-logo b {
-        color: #0d96d2;
-        /* Accent color */
-    }
-
-    .card-item {
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-    }
-    .card-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-    }
-    .card-image {
-        width: 100%;
-        aspect-ratio: 16/9; /* <-- ใช้ aspect-ratio เพื่อให้สัดส่วนคงที่ */
-        object-fit: cover;
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-    }
-
-    .hero-section {
-        background-image: url('dist/img/cover.png');
-        /* เปลี่ยนเป็น path ของรูปภาพที่คุณต้องการ */
-        background-size: cover;
-        background-position: center;
-        position: relative;
-        z-index: 1;
-        padding: 8rem 0;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.4);
-        /* Softer, slightly lighter overlay */
-        z-index: -1;
-    }
-
-    .feature-icon {
-        color: #0d96d2;
-        /* Accent blue */
-        transition: transform 0.3s ease;
-    }
-
-    .card-item:hover .feature-icon {
-        transform: translateY(-3px);
-        /* Subtle icon lift */
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .hero-section {
-            padding: 6rem 0;
-        }
-
-        .hero-section h1 {
-            font-size: 2.8rem;
-        }
-
-        .hero-section p {
-            font-size: 1rem;
-        }
-
-        .hero-section .space-x-0 {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .hero-section .btn-primary,
-        .hero-section .btn-secondary {
-            width: 90%;
-            max-width: none;
-            font-size: 0.9rem;
-            padding: 0.75rem 1.25rem;
-        }
-
-        .pixellink-logo {
-            font-size: 1.6rem;
-        }
-
-        .navbar .px-5 {
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-        }
-
-        .navbar .py-2 {
-            padding-top: 0.3rem;
-            padding-bottom: 0.3rem;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-        }
-
-        .card-item {
-            border-radius: 0.75rem;
-            /* Smaller radius on mobile */
-            padding: 1rem;
-        }
-
-        .card-image {
-            height: 160px;
-        }
-
-        .sm\:grid-cols-2 {
-            grid-template-columns: 1fr;
-        }
-
-        .flex-col.sm\:flex-row {
-            flex-direction: column;
-        }
-
-        .flex-col.sm\:flex-row>*:not(:last-child) {
-            margin-bottom: 1rem;
-        }
-
-        .md\:mb-0 {
-            margin-bottom: 1rem;
-        }
-
-        .footer-links {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .hero-section h1 {
-            font-size: 2.2rem;
-        }
-
-        .hero-section p {
-            font-size: 0.875rem;
-        }
-
-        .pixellink-logo {
-            font-size: 1.4rem;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-        }
-
-        .container {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-
-        .px-6 {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-
-        .p-10 {
-            padding: 1.5rem;
-        }
-
-        .card-item {
-            padding: 0.75rem;
-        }
-
-        .card-image {
-            height: 120px;
-        }
-    }
+@media (max-width: 480px) {
+  .hero-section h1 { font-size: 2.2rem; }
+  .hero-section p { font-size: 0.875rem; }
+  .pixellink-logo { font-size: 1.4rem; }
+  h2 { font-size: 1.5rem; }
+  .container { padding-left: 1rem; padding-right: 1rem; }
+  .px-6 { padding-left: 1rem; padding-right: 1rem; }
+  .p-10 { padding: 1.5rem; }
+  .card-item { padding: 0.75rem; }
+  .card-image { height: 120px; }
+}
     </style>
 </head>
 
@@ -403,8 +201,6 @@ $condb->close();
                         <?php
                         $image_source = 'dist/img/pdpa02.jpg'; // รูปสำรอง
                         if (!empty($job['job_image_path'])) {
-                            // Path จาก DB อาจจะเป็น '../uploads/...'
-                            // เราต้องแปลงให้เป็น path ที่ถูกต้องจากหน้า index.php
                             $correct_path = str_replace('../', '', $job['job_image_path']);
                             if (file_exists(htmlspecialchars($correct_path))) {
                                 $image_source = htmlspecialchars($correct_path);
@@ -418,6 +214,10 @@ $condb->close();
                         <div class="p-4 md:p-6 flex-grow flex flex-col justify-between">
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900 line-clamp-2"><?= htmlspecialchars($job['title']) ?></h3>
+                                <p class="text-sm text-gray-600 my-2">
+                                    <i class="fas fa-user mr-1 text-gray-400"></i>
+                                    <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?>
+                                </p>
                                 <p class="text-sm text-gray-500 mb-2">หมวดหมู่: <?= htmlspecialchars($job['category_name'] ?? 'ไม่ระบุ') ?></p>
                                 <p class="text-sm text-gray-700 line-clamp-3 font-light"><?= htmlspecialchars($job['description']) ?></p>
                             </div>
@@ -501,10 +301,10 @@ $condb->close();
             <p class="text-xs md:text-sm font-light">&copy; <?php echo date('Y'); ?> PixelLink. All rights reserved.</p>
         </div>
     </footer>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    // Optional: JavaScript for smooth scrolling to sections
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -514,7 +314,6 @@ $condb->close();
         });
     });
 
-    // Optional: Hero section animation (fade in)
     document.addEventListener('DOMContentLoaded', () => {
         const heroContent = document.querySelector('.animate-fade-in');
         heroContent.style.opacity = '0';
@@ -523,7 +322,6 @@ $condb->close();
             heroContent.style.opacity = '1';
         }, 100);
 
-        // Optional: Animate cards on scroll
         const cards = document.querySelectorAll('.animate-card-appear');
         const observerOptions = {
             root: null,
@@ -541,7 +339,7 @@ $condb->close();
                             'opacity 0.6s ease-out, transform 0.6s ease-out';
                         entry.target.style.opacity = '1';
                         entry.target.style.transform = 'translateY(0)';
-                    }, 200); // Slight delay for each card
+                    }, 200); 
                     observer.unobserve(entry.target);
                 }
             });

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 04, 2025 at 06:02 PM
+-- Generation Time: Aug 26, 2025 at 01:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -161,8 +161,7 @@ INSERT INTO `job_postings` (`post_id`, `designer_id`, `title`, `description`, `c
 (20, 10, 'ถ่ายสินค้าเพื่อขายออนไลน์', 'ถ่ายภาพสินค้าพร้อมแต่งภาพ เหมาะกับตลาดออนไลน์', 4, '3,000–7,000 บาท', '2025-07-10 16:43:43', 'active', 0, NULL),
 (21, 2, 'ออกแบบ UI เว็บไซต์', 'ดีไซน์หน้าเว็บให้สวยงาม น่าใช้งาน และตอบโจทย์ UX', 5, '10,000–25,000 บาท', '2025-07-10 16:43:43', 'active', 0, NULL),
 (22, 4, 'พัฒนาเว็บไซต์ด้วย HTML/CSS', 'รับสร้างเว็บไซต์พื้นฐานด้วย HTML/CSS ตามแบบที่ลูกค้าต้องการ', 6, '8,000–20,000 บาท', '2025-07-10 16:43:43', 'active', 0, NULL),
-(23, 2, 'ออกแบบป้ายต่างๆ', 'รับออกแบบป้าย ทันสมัย,สีสันสดสวย,คุ้มราคา100%', 1, '500–2,000 บาท', '2025-07-23 17:24:13', 'active', 0, NULL),
-(24, 2, 'รับวาดปกหนังสือ', 'ได้งานไวมากกกกกกกกกกกกกกกกก', 1, '1,500-3000 บาท', '2025-07-25 17:47:41', 'active', 0, NULL);
+(23, 2, 'ออกแบบป้ายงานบวช', 'รับออกแบบป้าย ทันสมัย,สีสันสดสวย,คุ้มราคา100%', 1, '500–3000 บาท', '2025-07-23 17:24:13', 'active', 0, 36);
 
 -- --------------------------------------------------------
 
@@ -482,7 +481,36 @@ INSERT INTO `logs` (`log_id`, `user_id`, `action`, `details`, `ip_address`, `tim
 (296, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-03 00:02:31'),
 (297, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-03 00:28:45'),
 (298, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-04 15:42:09'),
-(299, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-04 22:06:26');
+(299, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-04 22:06:26'),
+(300, 1, 'Login Attempt Failed', 'Incorrect password for: admin', '::1', '2025-08-05 08:43:11'),
+(301, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 08:43:17'),
+(302, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 08:43:40'),
+(303, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 09:02:30'),
+(304, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 09:07:00'),
+(305, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 09:18:07'),
+(306, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 09:19:13'),
+(307, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 09:22:26'),
+(308, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 09:23:40'),
+(309, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 09:38:55'),
+(310, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 09:44:13'),
+(311, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 12:10:04'),
+(312, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 12:10:25'),
+(313, 1, 'Login Attempt Failed', 'Incorrect password for: admin', '::1', '2025-08-05 12:13:21'),
+(314, 1, 'Login Attempt Failed', 'Incorrect password for: admin', '::1', '2025-08-05 12:13:30'),
+(315, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 12:25:39'),
+(316, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 12:42:40'),
+(317, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 12:58:35'),
+(318, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-05 12:59:57'),
+(319, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 13:06:03'),
+(320, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-05 13:06:53'),
+(321, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-07 12:07:03'),
+(322, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-07 12:08:50'),
+(323, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-07 12:17:38'),
+(324, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-07 12:19:27'),
+(325, 1, 'Login Successful', 'User logged in: admin', '::1', '2025-08-07 13:39:11'),
+(326, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-07 13:40:13'),
+(327, 2, 'Login Successful', 'User logged in: khoapun', '::1', '2025-08-26 18:02:04'),
+(328, 3, 'Login Successful', 'User logged in: beer888', '::1', '2025-08-26 18:09:18');
 
 -- --------------------------------------------------------
 
@@ -531,7 +559,7 @@ CREATE TABLE `profiles` (
 --
 
 INSERT INTO `profiles` (`profile_id`, `user_id`, `address`, `company_name`, `bio`, `portfolio_url`, `skills`, `profile_picture_url`) VALUES
-(1, 2, '123 Design St, BKK', 'PixelLink co. ltd', 'Passionate UI/UX designer and dev.', 'https://www.twitch.tv/', 'UX/UI, Figma, Photoshop, AI,Canva', '../uploads/profile_pictures/profile_2_1754317184.jpg'),
+(1, 2, '123 Design St, BKK', 'PixelLink co. ltd', 'Passionate UI/UX designer and dev.', 'https://www.twitch.tv/', 'UX/UI, Figma, Photoshop, AI,Canva', '../uploads/profile_pictures/profile_2_1754549012.jpg'),
 (2, 3, '456 Business Rd, Nonthaburi', 'Acme Corp', NULL, NULL, NULL, '/uploads/bob.jpg'),
 (3, 4, '789 Art Ave, Chiang Mai', NULL, 'Junior graphic designer looking for freelance work.', 'anna.artstation.com', 'Photoshop, Illustrator', '/uploads/anna.png'),
 (4, 5, '101 Tech Tower, Bangkok', 'Tech Corp', NULL, NULL, NULL, NULL);
@@ -664,7 +692,12 @@ INSERT INTO `uploaded_files` (`file_id`, `contract_id`, `job_post_id`, `uploader
 (25, NULL, NULL, 2, 'job_img_6889d42d330ec1753863213.jpg', '../uploads/job_images/job_img_6889d42d330ec1753863213.jpg', '2025-07-30 08:13:33', 568822, NULL, 'image/jpeg', '2025-07-30 15:13:33'),
 (26, NULL, NULL, 2, 'job_img_688a2790a325c1753884560.png', '../uploads/job_images/job_img_688a2790a325c1753884560.png', '2025-07-30 14:09:20', 206400, NULL, 'image/png', '2025-07-30 21:09:20'),
 (27, NULL, NULL, 2, 'job_img_689075243fba91754297636.png', '../uploads/job_images/job_img_689075243fba91754297636.png', '2025-08-04 08:53:56', 206400, NULL, 'image/png', '2025-08-04 15:53:56'),
-(29, NULL, NULL, 2, 'job_img_6890a9c2375571754311106.jpg', '../uploads/job_images/job_img_6890a9c2375571754311106.jpg', '2025-08-04 12:38:26', 295791, NULL, 'image/jpeg', '2025-08-04 19:38:26');
+(29, NULL, NULL, 2, 'job_img_6890a9c2375571754311106.jpg', '../uploads/job_images/job_img_6890a9c2375571754311106.jpg', '2025-08-04 12:38:26', 295791, NULL, 'image/jpeg', '2025-08-04 19:38:26'),
+(35, NULL, NULL, 2, 'job_img_6891638b0f6ec1754358667.png', '../uploads/job_images/job_img_6891638b0f6ec1754358667.png', '2025-08-05 01:51:07', 1058584, NULL, 'image/png', '2025-08-05 08:51:07'),
+(36, NULL, NULL, 2, 'job_img_689164471af951754358855.jpg', '../uploads/job_images/job_img_689164471af951754358855.jpg', '2025-08-05 01:54:15', 50249, NULL, 'image/jpeg', '2025-08-05 08:54:15'),
+(38, NULL, NULL, 2, 'job_img_68916a6ee76d51754360430.png', '../uploads/job_images/job_img_68916a6ee76d51754360430.png', '2025-08-05 02:20:30', 1058584, NULL, 'image/png', '2025-08-05 09:20:30'),
+(41, NULL, NULL, 2, 'job_img_6891925c8b2381754370652.png', '../uploads/job_images/job_img_6891925c8b2381754370652.png', '2025-08-05 05:10:52', 1058584, NULL, 'image/png', '2025-08-05 12:10:52'),
+(44, NULL, NULL, 2, 'job_img_689437dad240e1754544090.png', '../uploads/job_images/job_img_689437dad240e1754544090.png', '2025-08-07 05:21:30', 1058584, NULL, 'image/png', '2025-08-07 12:21:30');
 
 -- --------------------------------------------------------
 
@@ -693,14 +726,14 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `first_name`, `last_name`, `phone_number`, `user_type`, `registration_date`, `is_approved`, `is_active`, `last_login`) VALUES
 (1, 'admin', '12345678', 'admin@pixellink.com', 'กฤษดา', 'บุญจันดา', '0901234567', 'admin', '2025-06-07 15:44:37', 1, 1, NULL),
-(2, 'khoapun', '1234', 'jane@example.com', 'ศิขริน', 'คอมิธิน', '0812345678', 'designer', '2025-06-07 15:44:37', 1, 1, NULL),
+(2, 'khoapun', '1234', 'jane@example.com', 'ศิขริน', 'คอมิธิน555555', '0812345678', 'designer', '2025-06-07 15:44:37', 1, 1, NULL),
 (3, 'beer888', '1234', 'bob@company.com', 'เบียร์', 'สมิท', '0987654321', 'client', '2025-06-07 15:44:37', 1, 1, NULL),
 (4, 'anna', '1234', 'anna@portfolio.net', 'Anna', 'Lee', '0891112222', 'designer', '2025-06-07 15:44:37', 1, 1, NULL),
 (5, 'tech_corp', 'tech_pass', 'hr@techcorp.com', 'Tech', 'Corp HR', '029998888', 'client', '2025-06-07 15:44:37', 0, 1, NULL),
 (6, 'krit.ti', '12345678', 'krit.ti@rmuti.ac.th', 'Krit', 'T.siriwattana', '0000000000', 'admin', '2025-06-08 11:16:59', 1, 1, NULL),
 (7, 'kitsada.in', '1234', 'pakawat.in@gmail.com', 'kitsada', 'Ariyawatkul\r\n', '0000000000', 'designer', '2025-06-09 07:58:49', 1, 1, NULL),
 (10, 'party888', '1234', 'kkiii@gmail.com', 'กิตติพงศ์', 'เถื่อนกลาง', '0555555555', 'designer', '2025-06-24 09:38:07', 1, 1, NULL),
-(12, 'TESTTTTT', 'Test_lll123456789@', 'KKKKKKK@gmail.com', 'TEST', 'PROJECT1', '0999999999', 'designer', '2025-07-07 14:54:31', 0, 1, NULL);
+(12, 'TESTTTTT', 'Test_lll123456789@', 'KKKKKKK@gmail.com', 'TEST12332', 'PROJECT1', '0999999999', 'designer', '2025-07-07 14:54:31', 1, 1, NULL);
 
 --
 -- Indexes for dumped tables
@@ -853,13 +886,13 @@ ALTER TABLE `job_categories`
 -- AUTO_INCREMENT for table `job_postings`
 --
 ALTER TABLE `job_postings`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=300;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=329;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -901,7 +934,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `uploaded_files`
 --
 ALTER TABLE `uploaded_files`
-  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `users`

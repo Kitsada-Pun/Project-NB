@@ -15,31 +15,24 @@ if ($condb->connect_error) {
 $condb->set_charset("utf8mb4");
 
 // --- ดึงข้อมูลพื้นฐาน ---
-$loggedInUserName = ''; // Initialize variable for logged-in user's name
-
-// Fetch logged-in user's name if session is active
+$loggedInUserName = '';
 if (isset($_SESSION['user_id'])) {
-    $loggedInUserName = $_SESSION['username'] ?? $_SESSION['full_name'] ?? '';
-    if (empty($loggedInUserName)) {
-        $user_id = $_SESSION['user_id'];
-        $sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
-        $stmt_user = $condb->prepare($sql_user);
-        if ($stmt_user) {
-            $stmt_user->bind_param("i", $user_id);
-            $stmt_user->execute();
-            $result_user = $stmt_user->get_result();
-            if ($result_user->num_rows === 1) {
-                $user_info = $result_user->fetch_assoc();
-                $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
-            }
-            $stmt_user->close();
+    $user_id = $_SESSION['user_id'];
+    $sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+    $stmt_user = $condb->prepare($sql_user);
+    if ($stmt_user) {
+        $stmt_user->bind_param("i", $user_id);
+        $stmt_user->execute();
+        $result_user = $stmt_user->get_result();
+        if ($result_user->num_rows === 1) {
+            $user_info = $result_user->fetch_assoc();
+            $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
         }
+        $stmt_user->close();
     }
 }
-$page_title = "รายการงานทั้งหมด";
-$jobs = [];
 
-// --- 1. ดึงข้อมูลหมวดหมู่ทั้งหมดสำหรับ Filter ---
+// --- ดึงข้อมูลหมวดหมู่ทั้งหมดสำหรับ Filter ---
 $categories = [];
 $sql_categories = "SELECT category_id, category_name FROM job_categories ORDER BY category_name";
 $result_categories = $condb->query($sql_categories);
@@ -47,52 +40,82 @@ if ($result_categories) {
     $categories = $result_categories->fetch_all(MYSQLI_ASSOC);
 }
 
-// --- 2. สร้าง Logic สำหรับการ Filter และ Search ---
+// --- สร้าง Logic สำหรับการ Filter และ Search ---
 $search_keyword = $_GET['search'] ?? '';
 $filter_category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+$type = $_GET['type'] ?? 'postings'; // Default to 'postings' if not set
 
-$page_title = "ประกาศรับงานล่าสุด";
-
-$sql = "SELECT
-            jp.post_id AS id,
-            jp.title,
-            jp.description,
-            jp.price_range,
-            jp.posted_date,
-            'posting' AS type,
-            u.first_name,
-            u.last_name,
-            jc.category_name,
-            uf.file_path AS job_image_path
-        FROM job_postings AS jp
-        JOIN users AS u ON jp.designer_id = u.user_id
-        LEFT JOIN job_categories AS jc ON jp.category_id = jc.category_id
-        LEFT JOIN uploaded_files AS uf ON jp.main_image_id = uf.file_id
-        WHERE jp.status = 'active'";
-
+$jobs = [];
 $params = [];
 $types = '';
 
-// เพิ่มเงื่อนไขการค้นหาด้วย Keyword
-if (!empty($search_keyword)) {
-    $sql .= " AND (jp.title LIKE ? OR jp.description LIKE ?)";
-    $keyword_param = "%" . $search_keyword . "%";
-    $params[] = $keyword_param;
-    $params[] = $keyword_param;
-    $types .= 'ss';
-}
+if ($type === 'postings') {
+    $page_title = "ประกาศรับงานทั้งหมด";
+    $sql = "SELECT
+                jp.post_id AS id,
+                jp.title,
+                jp.description,
+                jp.price_range,
+                jp.posted_date,
+                'posting' AS type,
+                u.first_name,
+                u.last_name,
+                jc.category_name,
+                uf.file_path AS job_image_path
+            FROM job_postings AS jp
+            JOIN users AS u ON jp.designer_id = u.user_id
+            LEFT JOIN job_categories AS jc ON jp.category_id = jc.category_id
+            LEFT JOIN uploaded_files AS uf ON jp.main_image_id = uf.file_id
+            WHERE jp.status = 'active'";
 
-// เพิ่มเงื่อนไขการกรองด้วย Category
-if ($filter_category > 0) {
-    $sql .= " AND jp.category_id = ?";
-    $params[] = $filter_category;
-    $types .= 'i';
-}
+    if (!empty($search_keyword)) {
+        $sql .= " AND (jp.title LIKE ? OR jp.description LIKE ?)";
+        $keyword_param = "%" . $search_keyword . "%";
+        array_push($params, $keyword_param, $keyword_param);
+        $types .= 'ss';
+    }
 
-$sql .= " ORDER BY jp.posted_date DESC";
+    if ($filter_category > 0) {
+        $sql .= " AND jp.category_id = ?";
+        $params[] = $filter_category;
+        $types .= 'i';
+    }
+    $sql .= " ORDER BY jp.posted_date DESC";
+
+} else { // Default to 'requests'
+    $page_title = "ประกาศหางานทั้งหมด";
+     $sql = "SELECT
+                cjr.request_id AS id,
+                cjr.title,
+                cjr.description,
+                cjr.budget AS price_range,
+                cjr.posted_date,
+                'request' AS type,
+                u.first_name,
+                u.last_name,
+                jc.category_name,
+                NULL AS job_image_path
+            FROM client_job_requests AS cjr
+            JOIN users AS u ON cjr.client_id = u.user_id
+            LEFT JOIN job_categories AS jc ON cjr.category_id = jc.category_id
+            WHERE cjr.status = 'open'";
+    
+    if (!empty($search_keyword)) {
+        $sql .= " AND (cjr.title LIKE ? OR cjr.description LIKE ?)";
+        $keyword_param = "%" . $search_keyword . "%";
+        array_push($params, $keyword_param, $keyword_param);
+        $types .= 'ss';
+    }
+
+    if ($filter_category > 0) {
+        $sql .= " AND cjr.category_id = ?";
+        $params[] = $filter_category;
+        $types .= 'i';
+    }
+     $sql .= " ORDER BY cjr.posted_date DESC";
+}
 
 $stmt = $condb->prepare($sql);
-
 if ($stmt) {
     if (!empty($params)) {
         $stmt->bind_param($types, ...$params);
@@ -105,92 +128,9 @@ if ($stmt) {
     error_log("SQL Error: " . $condb->error);
 }
 
-
 $condb->close();
 ?>
-<!DOCTYPE html>
-<html lang="th">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> | PixelLink</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f8fafc;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #0a5f97 0%, #0d96d2 100%);
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(13, 150, 210, 0.4);
-        }
-
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .btn-danger:hover {
-            background-color: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-        }
-
-        .text-gradient {
-            background: linear-gradient(45deg, #0a5f97, #0d96d2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .card-item {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-image {
-            width: 100%;
-            aspect-ratio: 16/9;
-            object-fit: cover;
-            border-top-left-radius: 1rem;
-            border-top-right-radius: 1rem;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 1.2s ease-out forwards;
-        }
-        .pixellink-logo-footer {
-            font-weight: 700;
-            font-size: 2.25rem;
-            background: linear-gradient(45deg, #0a5f97, #0d96d2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
-</head>
-
+<?php include 'includes/header.php'; ?>
 <body class="min-h-screen flex flex-col">
 
     <nav class="bg-white/90 backdrop-blur-sm p-4 shadow-md sticky top-0 z-50">
@@ -199,7 +139,14 @@ $condb->close();
             <div class="space-x-4 flex items-center">
                 <?php if (isset($_SESSION['user_id'])) : ?>
                     <span class="font-medium text-slate-700">สวัสดี, <?= htmlspecialchars($loggedInUserName) ?>!</span>
-                    <a href="designer/view_profile.php?user_id=<?= $_SESSION['user_id']; ?>" class="btn-primary text-white px-5 py-2 rounded-lg font-medium shadow-md">ดูโปรไฟล์</a>
+                    <?php
+                        // Determine the correct path to the profile page based on user type
+                        $profile_path = 'designer/view_profile.php'; // Default path
+                        if ($_SESSION['user_type'] === 'client') {
+                            $profile_path = 'client/view_profile.php';
+                        }
+                    ?>
+                    <a href="<?= $profile_path ?>?user_id=<?= $_SESSION['user_id']; ?>" class="btn-primary text-white px-5 py-2 rounded-lg font-medium shadow-md">ดูโปรไฟล์</a>
                     <a href="logout.php" class="btn-danger text-white px-5 py-2 rounded-lg font-medium shadow-md">ออกจากระบบ</a>
                 <?php else : ?>
                     <a href="login.php" class="px-3 py-1.5 sm:px-5 sm:py-2 rounded-lg font-medium border-2 border-transparent hover:border-blue-300 hover:text-blue-600 transition duration-300 text-gray-700">เข้าสู่ระบบ</a>
@@ -210,19 +157,19 @@ $condb->close();
     </nav>
 
     <main class="flex-grow">
-
-        <section id="job-postings" class="py-12 md:py-16 bg-gradient-to-br from-blue-50 to-gray-50">
+        <section id="job-listings" class="py-12 md:py-16 bg-gradient-to-br from-blue-50 to-gray-50">
             <div class="container mx-auto px-4 md:px-6">
 
-            <div class="text-center mb-12">
-                <h1 class="text-4xl md:text-5xl font-bold text-gradient animate-fade-in"><?= htmlspecialchars($page_title) ?></h1>
-                <p class="mt-4 text-lg text-slate-600 animate-fade-in" style="animation-delay: 0.2s;">ค้นหางานที่ใช่ หรือนักออกแบบที่โดนใจคุณได้ที่นี่</p>
-            </div>
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gradient"><?= htmlspecialchars($page_title) ?></h1>
+                    <p class="mt-4 text-lg text-slate-600">ค้นหางานที่ใช่ หรือนักออกแบบที่โดนใจคุณได้ที่นี่</p>
+                </div>
 
                 <form action="job_listings.php" method="GET" class="mb-12 p-6 bg-white rounded-xl shadow-lg">
+                    <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                         <div class="col-span-1 md:col-span-2">
-                            <label for="search-keyword" class="block text-sm font-medium text-slate-700 mb-1">ค้นหาด้วยคีย์เวิร์ด</label>
+                            <label for="search-keyword" class="block text-sm font-medium text-slate-700 mb-1">ค้นหางาน</label>
                             <input type="text" name="search" id="search-keyword" value="<?= htmlspecialchars($search_keyword) ?>" placeholder="เช่น 'โลโก้', 'วาดภาพประกอบ'" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
@@ -250,29 +197,33 @@ $condb->close();
                         <?php foreach ($jobs as $job): ?>
                             <div class="card-item flex flex-col">
                                 <?php
-                                $image_source = 'dist/img/pdpa02.jpg'; // รูปสำรอง
+                                $image_source = 'dist/img/pdpa02.jpg'; // Default image
                                 if (!empty($job['job_image_path'])) {
-                                    // Path จาก DB อาจจะเป็น '../uploads/...'
-                                    // เราต้องแปลงให้เป็น path ที่ถูกต้องจากหน้า index.php
                                     $correct_path = str_replace('../', '', $job['job_image_path']);
-                                    if (file_exists(htmlspecialchars($correct_path))) {
+                                    if (file_exists($correct_path)) {
                                         $image_source = htmlspecialchars($correct_path);
                                     }
                                 }
                                 ?>
-                                <a href="job_detail.php?id=<?= $job['id'] ?>&type=posting">
+                                <a href="job_detail.php?id=<?= $job['id'] ?>&type=<?= $job['type'] ?>">
                                     <img src="<?= $image_source ?>" alt="ภาพประกอบงาน: <?= htmlspecialchars($job['title']) ?>" class="card-image">
                                 </a>
                                 <div class="p-4 md:p-6 flex-grow flex flex-col justify-between">
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-900 line-clamp-2"><?= htmlspecialchars($job['title']) ?></h3>
+                                        
+                                        <p class="text-sm text-gray-600 my-2">
+                                            <i class="fas fa-user mr-1 text-gray-400"></i>
+                                            <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?>
+                                        </p>
+                                        
                                         <p class="text-sm text-gray-500 mb-2">หมวดหมู่: <?= htmlspecialchars($job['category_name'] ?? 'ไม่ระบุ') ?></p>
                                         <p class="text-sm text-gray-700 line-clamp-3 font-light"><?= htmlspecialchars($job['description']) ?></p>
                                     </div>
                                     <div class="mt-4">
                                         <p class="text-lg font-semibold text-green-700">ราคา: <?= htmlspecialchars($job['price_range'] ?? 'สอบถาม') ?></p>
                                         <p class="text-xs text-gray-500">ประกาศเมื่อ: <?= date('d M Y', strtotime($job['posted_date'])) ?></p>
-                                        <a href="job_detail.php?id=<?= $job['id'] ?>&type=posting" class="mt-2 inline-block btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-lg w-full text-center">ดูรายละเอียด</a>
+                                        <a href="job_detail.php?id=<?= $job['id'] ?>&type=<?= $job['type'] ?>" class="mt-2 inline-block btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-lg w-full text-center">ดูรายละเอียด</a>
                                     </div>
                                 </div>
                             </div>
@@ -283,22 +234,6 @@ $condb->close();
         </section>
     </main>
 
-    <footer class="bg-gray-900 text-gray-300 py-8 mt-auto">
-        <div class="container mx-auto px-4 md:px-6 text-center">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                <a href="main.php" class="pixellink-logo-footer mb-4 md:mb-0 transition duration-300 hover:opacity-80">Pixel<b>Link</b></a>
-                <div class="flex flex-wrap justify-center space-x-2 md:space-x-6 text-sm md:text-base">
-                    <a href="#" class="hover:text-white transition duration-300 mb-2 md:mb-0 font-light">เกี่ยวกับเรา</a>
-                    <a href="#" class="hover:text-white transition duration-300 mb-2 md:mb-0 font-light">ติดต่อเรา</a>
-                    <a href="#" class="hover:text-white transition duration-300 mb-2 md:mb-0 font-light">เงื่อนไขการใช้งาน</a>
-                    <a href="#" class="hover:text-white transition duration-300 mb-2 md:mb-0 font-light">นโยบายความเป็นส่วนตัว</a>
-                </div>
-            </div>
-            <hr class="border-gray-700 my-6">
-            <p class="text-xs md:text-sm font-light">&copy; <?php echo date('Y'); ?> PixelLink. All rights reserved.</p>
-        </div>
-    </footer>
+    
 
-</body>
-
-</html>
+<?php include 'includes/footer.php'; ?>

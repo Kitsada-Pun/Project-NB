@@ -32,7 +32,8 @@ $condb->set_charset("utf8mb4");
 // ดึง user_id จาก URL และ Session
 $user_id_to_view = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
 $current_user_id = $_SESSION['user_id'] ?? 0;
-$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'ผู้ใช้งาน';$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Designer';
+$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'ผู้ใช้งาน';
+$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Designer';
 $loggedInUserName = ''; // Initialize variable for logged-in user's name
 
 // Fetch logged-in user's name if session is active
@@ -69,8 +70,8 @@ if ($user_id_to_view > 0) {
         $stmt_profile->execute();
         $profile_data = $stmt_profile->get_result()->fetch_assoc();
         $stmt_profile->close();
-    }    
-        }
+    }
+}
 
 if ($user_id_to_view > 0) {
     // ดึงข้อมูลโปรไฟล์
@@ -120,6 +121,7 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
 ?>
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,28 +129,137 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
-        body { font-family: 'Kanit', sans-serif; }
-        .text-gradient { background: linear-gradient(45deg, #0a5f97, #0d96d2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .carousel-content { display: grid; grid-auto-flow: column; grid-auto-columns: calc(100% - 1rem); gap: 1.5rem; overflow-x: scroll; scroll-behavior: smooth; scrollbar-width: none; }
-        .carousel-content::-webkit-scrollbar { display: none; }
-        @media (min-width: 768px) { .carousel-content { grid-auto-columns: calc(50% - 0.75rem); } }
-        @media (min-width: 1024px) { .carousel-content { grid-auto-columns: calc(33.333% - 1rem); } }
-        .card-item { background: white; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.3s ease; flex-shrink: 0; display: flex; flex-direction: column; }
-        .card-item:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
-        .card-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
-        .carousel-button { background-color: rgba(0,0,0,0.5); color: white; border: none; padding: 0.75rem 0.5rem; cursor: pointer; z-index: 10; border-radius: 9999px; position: absolute; top: 50%; transform: translateY(-50%); transition: all 0.3s ease; width: 2.5rem; height: 2.5rem; display: flex; justify-content: center; align-items: center; }
-        .carousel-button.left { left: -1rem; }
-        .carousel-button.right { right: -1rem; }
-        .btn-primary { background: linear-gradient(45deg, #0a5f97 0%, #0d96d2 100%); color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(13, 150, 210, 0.3); }
-        .btn-primary:hover { background: linear-gradient(45deg, #0d96d2 0%, #0a5f97 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13, 150, 210, 0.5); }
-        .btn-danger { background-color: #ef4444; color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
-        .btn-danger:hover { background-color: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4); }
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .text-gradient {
+            background: linear-gradient(45deg, #0a5f97, #0d96d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .carousel-content {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: calc(100% - 1rem);
+            gap: 1.5rem;
+            overflow-x: scroll;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .carousel-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .carousel-content {
+                grid-auto-columns: calc(50% - 0.75rem);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .carousel-content {
+                grid-auto-columns: calc(33.333% - 1rem);
+            }
+        }
+
+        .card-item {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+
+        .carousel-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 0.75rem 0.5rem;
+            cursor: pointer;
+            z-index: 10;
+            border-radius: 9999px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .carousel-button.left {
+            left: -1rem;
+        }
+
+        .carousel-button.right {
+            right: -1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #0a5f97 0%, #0d96d2 100%);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 150, 210, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #0d96d2 0%, #0a5f97 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 150, 210, 0.5);
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+        .pixellink-logo,
+        .pixellink-logo-footer {
+            font-weight: 700;
+            font-size: 2.25rem;
+            background: linear-gradient(45deg, #0a5f97, #0d96d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pixellink-logo b,
+        .pixellink-logo-footer b {
+            color: #0d96d2;
+        }
     </style>
 </head>
+
 <body class="bg-slate-100 min-h-screen flex flex-col">
 
     <nav class="bg-white/90 backdrop-blur-sm p-4 shadow-md sticky top-0 z-50">
@@ -174,7 +285,7 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
                         <p class="text-md text-gray-600 mt-2"><i class="fas fa-envelope mr-2"></i><?= htmlspecialchars($display_email) ?></p>
                         <p class="text-md text-gray-600"><i class="fas fa-phone mr-2"></i><?= htmlspecialchars($display_tel) ?></p>
                         <p class="text-md text-gray-600"><i class="fas fa-building mr-2"></i><?= htmlspecialchars($display_company_name) ?></p>
-                        
+
                         <?php if ($user_id_to_view == $current_user_id): ?>
                             <div class="mt-4">
                                 <a href="edit_profile.php" class="inline-block bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-lg font-medium text-sm shadow-md transition-colors">
@@ -182,7 +293,7 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
                                 </a>
                             </div>
                         <?php endif; ?>
-                        
+
                     </div>
                 </div>
 
@@ -192,14 +303,14 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
                 </div>
 
                 <?php if (!empty($display_skills)): ?>
-                <div class="mb-8">
-                    <h2 class="text-2xl font-semibold text-gradient mb-4">ทักษะ</h2>
-                    <div class="flex flex-wrap gap-2">
-                        <?php foreach ($display_skills as $skill): ?>
-                            <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"><?= htmlspecialchars(trim($skill)) ?></span>
-                        <?php endforeach; ?>
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-semibold text-gradient mb-4">ทักษะ</h2>
+                        <div class="flex flex-wrap gap-2">
+                            <?php foreach ($display_skills as $skill): ?>
+                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"><?= htmlspecialchars(trim($skill)) ?></span>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
 
                 <div class="mb-8">
@@ -227,15 +338,15 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
                                             <div class="mt-4">
                                                 <p class="text-lg font-semibold text-green-700">ราคา: <?= htmlspecialchars($job['price_range'] ?? 'สอบถาม') ?></p>
                                                 <p class="text-xs text-gray-500">ประกาศเมื่อ: <?= date('d M Y', strtotime($job['posted_date'])) ?></p>
-                                                
+
                                                 <div class="mt-2 flex space-x-2">
                                                     <a href="../job_detail.php?id=<?= $job['post_id'] ?>&type=posting" class="flex-1 btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-lg text-center">ดูรายละเอียด</a>
-                                                    
+
                                                     <?php if ($user_id_to_view == $current_user_id): ?>
-                                                    <a href="edit_job_post.php?id=<?= $job['post_id'] ?>" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg font-medium text-sm shadow-lg transition-colors"><i class="fas fa-pencil-alt"></i></a>
-                                                    
-                                                    <a href="delete_job_post.php?id=<?= $job['post_id'] ?>" onclick="confirmDelete(event, <?= $job['post_id'] ?>)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium text-sm shadow-lg transition-colors"><i class="fas fa-trash"></i></a>
-                                                    
+                                                        <a href="edit_job_post.php?id=<?= $job['post_id'] ?>" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg font-medium text-sm shadow-lg transition-colors"><i class="fas fa-pencil-alt"></i></a>
+
+                                                        <a href="delete_job_post.php?id=<?= $job['post_id'] ?>" onclick="confirmDelete(event, <?= $job['post_id'] ?>)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium text-sm shadow-lg transition-colors"><i class="fas fa-trash"></i></a>
+
                                                     <?php endif; ?>
                                                 </div>
 
@@ -253,35 +364,60 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
         <?php endif; ?>
     </main>
 
-    <footer class="bg-slate-800 text-slate-400 py-6 mt-auto">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-sm">&copy; <?= date('Y'); ?> PixelLink. All rights reserved.</p>
-        </div>
-    </footer>
+    <?php include '../includes/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    
-    function confirmDelete(event, postId) {
-        event.preventDefault();
+        function confirmDelete(event, postId) {
+            event.preventDefault();
 
-        Swal.fire({
-            title: 'คุณแน่ใจหรือไม่?',
-            text: "คุณจะไม่สามารถกู้คืนโพสต์นี้ได้!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'ใช่, ลบเลย!',
-            cancelButtonText: 'ยกเลิก'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = 'delete_job_post.php?id=' + postId;
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "คุณจะไม่สามารถกู้คืนโพสต์นี้ได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'delete_job_post.php?id=' + postId;
+                }
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            <?php if ($show_success_popup): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ!',
+                    text: 'อัปเดตโปรไฟล์ของคุณเรียบร้อยแล้ว',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            <?php elseif ($show_no_change_popup): ?>
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ไม่มีการเปลี่ยนแปลง',
+                    text: 'ข้อมูลของคุณเป็นปัจจุบันอยู่แล้ว',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            <?php endif; ?>
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const showSuccessPopup = localStorage.getItem('showSuccessPopup') === 'true';
+            if (showSuccessPopup) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ!',
+                    text: 'อัปเดตโปรไฟล์ของคุณเรียบร้อยแล้ว',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
             }
-        })
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {  
+        });
         <?php if ($show_success_popup): ?>
             Swal.fire({
                 icon: 'success',
@@ -290,69 +426,50 @@ $display_profile_pic = !empty($profile_data['profile_picture_url']) && file_exis
                 timer: 2500,
                 showConfirmButton: false
             });
-        <?php elseif ($show_no_change_popup): ?>
-            Swal.fire({
-                icon: 'info',
-                title: 'ไม่มีการเปลี่ยนแปลง',
-                text: 'ข้อมูลของคุณเป็นปัจจุบันอยู่แล้ว',
-                timer: 2500,
-                showConfirmButton: false
-            });
         <?php endif; ?>
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        const showSuccessPopup = localStorage.getItem('showSuccessPopup') === 'true';
-        if (showSuccessPopup) {
-            Swal.fire({
-                icon: 'success',
-                title: 'สำเร็จ!',
-                text: 'อัปเดตโปรไฟล์ของคุณเรียบร้อยแล้ว',
-                timer: 2500,
-                showConfirmButton: false
-            });
-        }
-    });
-        <?php if ($show_success_popup): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'สำเร็จ!',
-                text: 'อัปเดตโปรไฟล์ของคุณเรียบร้อยแล้ว',
-                timer: 2500,
-                showConfirmButton: false
-            });
-        <?php endif; ?>
-    document.addEventListener('DOMContentLoaded', function() {
-        const carouselContent = document.getElementById('carouselContent');
-        if (!carouselContent) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselContent = document.getElementById('carouselContent');
+            if (!carouselContent) return;
 
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
 
-        function updateButtons() {
-            const { scrollWidth, clientWidth, scrollLeft } = carouselContent;
-            if (scrollWidth <= clientWidth) {
-                prevBtn.style.display = 'none';
-                nextBtn.style.display = 'none';
-                return;
+            function updateButtons() {
+                const {
+                    scrollWidth,
+                    clientWidth,
+                    scrollLeft
+                } = carouselContent;
+                if (scrollWidth <= clientWidth) {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                    return;
+                }
+                prevBtn.style.display = scrollLeft > 0 ? 'flex' : 'none';
+                nextBtn.style.display = scrollLeft < (scrollWidth - clientWidth - 1) ? 'flex' : 'none';
             }
-            prevBtn.style.display = scrollLeft > 0 ? 'flex' : 'none';
-            nextBtn.style.display = scrollLeft < (scrollWidth - clientWidth - 1) ? 'flex' : 'none';
-        }
 
-        prevBtn.addEventListener('click', () => {
-            const cardWidth = carouselContent.querySelector('.card-item').offsetWidth;
-            carouselContent.scrollBy({ left: -(cardWidth + 24), behavior: 'smooth' });
+            prevBtn.addEventListener('click', () => {
+                const cardWidth = carouselContent.querySelector('.card-item').offsetWidth;
+                carouselContent.scrollBy({
+                    left: -(cardWidth + 24),
+                    behavior: 'smooth'
+                });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const cardWidth = carouselContent.querySelector('.card-item').offsetWidth;
+                carouselContent.scrollBy({
+                    left: cardWidth + 24,
+                    behavior: 'smooth'
+                });
+            });
+
+            carouselContent.addEventListener('scroll', () => setTimeout(updateButtons, 250));
+            window.addEventListener('resize', updateButtons);
+            updateButtons();
         });
-
-        nextBtn.addEventListener('click', () => {
-            const cardWidth = carouselContent.querySelector('.card-item').offsetWidth;
-            carouselContent.scrollBy({ left: cardWidth + 24, behavior: 'smooth' });
-        });
-
-        carouselContent.addEventListener('scroll', () => setTimeout(updateButtons, 250));
-        window.addEventListener('resize', updateButtons);
-        updateButtons();
-    });
     </script>
 </body>
+
 </html>
