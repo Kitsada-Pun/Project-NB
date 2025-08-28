@@ -28,12 +28,36 @@ if ($result_cat) {
     $categories = $result_cat->fetch_all(MYSQLI_ASSOC);
 }
 
-// ดึงข้อมูลประกาศรับงานแนะนำ (Featured Job Postings)
-$job_postings = [];
-// --- SQL EDIT: Added jp.description and jp.posted_date ---
+$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Designer';
+// --- ดึงชื่อผู้ใช้ที่ล็อกอิน ---
+if (isset($_SESSION['user_id'])) {
+    $loggedInUserName = $_SESSION['username'] ?? $_SESSION['full_name'] ?? '';
+    if (empty($loggedInUserName)) {
+        $user_id = $_SESSION['user_id'];
+        $sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+        $stmt_user = $condb->prepare($sql_user);
+        if ($stmt_user) {
+            $stmt_user->bind_param("i", $user_id);
+            $stmt_user->execute();
+            $result_user = $stmt_user->get_result();
+            if ($result_user->num_rows === 1) {
+                $user_info = $result_user->fetch_assoc();
+                $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
+            }
+            $stmt_user->close();
+        }
+    }
+}
+
+$job_postings_from_others = [];
 $sql_job_postings = "SELECT
-                        jp.post_id, jp.title, jp.description, jp.price_range, jp.posted_date,
-                        u.first_name, u.last_name,
+                        jp.post_id,
+                        jp.title,
+                        jp.description,
+                        jp.price_range,
+                        jp.posted_date,
+                        u.first_name,
+                        u.last_name,
                         jc.category_name,
                         uf.file_path AS job_image_path
                     FROM job_postings AS jp
@@ -42,18 +66,31 @@ $sql_job_postings = "SELECT
                     LEFT JOIN uploaded_files AS uf ON jp.main_image_id = uf.file_id
                     WHERE jp.status = 'active'
                     ORDER BY jp.posted_date DESC
-                    LIMIT 8";
+                    LIMIT 12";
 
-$result_jobs = $condb->query($sql_job_postings);
-if ($result_jobs) {
-    $job_postings = $result_jobs->fetch_all(MYSQLI_ASSOC);
+$result_job_postings = $condb->query($sql_job_postings);
+if ($result_job_postings) {
+    $job_postings_from_others = $result_job_postings->fetch_all(MYSQLI_ASSOC);
+} else {
+    error_log("SQL Error (job_postings_from_others): " . $condb->error);
 }
-
 // 4. เรียกใช้ Header
 include '../includes/header.php';
 ?>
 
 <main class="flex-grow">
+    <nav class="bg-white/80 backdrop-blur-sm p-4 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="main.php">
+                <img src="../dist/img/logo.png" alt="PixelLink Logo" class="h-12 transition-transform hover:scale-105">
+            </a>
+            <div class="space-x-4 flex items-center">
+                <span class="font-medium text-slate-700">สวัสดี, <?= htmlspecialchars($loggedInUserName) ?>!</span>
+                <a href="view_profile.php?user_id=<?= $_SESSION['user_id']; ?>" class="btn-primary text-white px-5 py-2 rounded-lg font-medium shadow-md">ดูโปรไฟล์</a>
+                <a href="../logout.php" class="btn-danger text-white px-5 py-2 rounded-lg font-medium shadow-md">ออกจากระบบ</a>
+            </div>
+        </div>
+    </nav>
     
     <div class="relative bg-gradient-to-br from-blue-600 to-indigo-700 pt-20 pb-28">
         <div class="container mx-auto px-4 text-center text-white">
@@ -71,7 +108,7 @@ include '../includes/header.php';
             </form>
         </div>
     </div>
-
+<br><br><br><br><br>
     <div class="container mx-auto px-4 md:px-6 -mt-20">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -113,33 +150,38 @@ include '../includes/header.php';
             </div>
         </section>
 
-        <section id="featured-services" class="pb-16">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">บริการแนะนำ</h2>
-            <?php if (empty($job_postings)): ?>
-                <div class="bg-white p-6 rounded-lg text-center text-gray-500">ยังไม่มีบริการแนะนำในขณะนี้</div>
+        <section id="available-jobs" class="py-12 md:py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 md:mb-10">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800 mb-4 sm:mb-0 text-center sm:text-left text-gradient">บริการแนะนำ</h2>
+                <a href="../job_listings.php?type=postings" class="btn-secondary px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium text-sm md:text-base">
+                    ดูทั้งหมด <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+
+            <?php if (empty($job_postings_from_others)): ?>
+                <div class="bg-blue-100 text-blue-700 p-4 rounded-lg text-center">ยังไม่มีประกาศรับงานในขณะนี้</div>
             <?php else: ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    <?php foreach ($job_postings as $job): ?>
+                    <?php foreach ($job_postings_from_others as $job): ?>
                         <div class="card-item flex flex-col">
                             <?php
-                                $image_source = '../dist/img/pdpa02.jpg';
-                                if (!empty($job['job_image_path'])) {
-                                    $correct_path = str_replace('../', '', $job['job_image_path']);
-                                    if (file_exists($correct_path)) {
-                                        $image_source = htmlspecialchars($correct_path);
-                                    }
-                                }
+                                $image_path = str_replace('../', '', $job['job_image_path']);
+                                $image_source = (!empty($image_path) && file_exists($image_path)) ? htmlspecialchars($image_path) : '../dist/img/pdpa02.jpg';
                             ?>
                             <a href="../job_detail.php?id=<?= $job['post_id'] ?>&type=posting">
                                 <img src="<?= $image_source ?>" alt="ภาพประกอบงาน: <?= htmlspecialchars($job['title']) ?>" class="card-image">
                             </a>
+
                             <div class="p-4 md:p-6 flex-grow flex flex-col justify-between">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900 line-clamp-2"><?= htmlspecialchars($job['title']) ?></h3>
+                                    
                                     <p class="text-sm text-gray-600 my-2">
                                         <i class="fas fa-user mr-1 text-gray-400"></i>
                                         <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?>
                                     </p>
+                                    
                                     <p class="text-sm text-gray-500 mb-2">หมวดหมู่: <?= htmlspecialchars($job['category_name'] ?? 'ไม่ระบุ') ?></p>
                                     <p class="text-sm text-gray-700 line-clamp-3 font-light"><?= htmlspecialchars($job['description']) ?></p>
                                 </div>
@@ -153,7 +195,8 @@ include '../includes/header.php';
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-        </section>
+        </div>
+    </section>
     </div>
 </main>
 

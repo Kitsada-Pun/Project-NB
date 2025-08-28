@@ -15,20 +15,24 @@ if ($condb->connect_error) {
 $condb->set_charset("utf8mb4");
 
 // --- ดึงข้อมูลพื้นฐาน ---
-$loggedInUserName = '';
+$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Designer';
+// --- ดึงชื่อผู้ใช้ที่ล็อกอิน ---
 if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-    $sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
-    $stmt_user = $condb->prepare($sql_user);
-    if ($stmt_user) {
-        $stmt_user->bind_param("i", $user_id);
-        $stmt_user->execute();
-        $result_user = $stmt_user->get_result();
-        if ($result_user->num_rows === 1) {
-            $user_info = $result_user->fetch_assoc();
-            $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
+    $loggedInUserName = $_SESSION['username'] ?? $_SESSION['full_name'] ?? '';
+    if (empty($loggedInUserName)) {
+        $user_id = $_SESSION['user_id'];
+        $sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+        $stmt_user = $condb->prepare($sql_user);
+        if ($stmt_user) {
+            $stmt_user->bind_param("i", $user_id);
+            $stmt_user->execute();
+            $result_user = $stmt_user->get_result();
+            if ($result_user->num_rows === 1) {
+                $user_info = $result_user->fetch_assoc();
+                $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
+            }
+            $stmt_user->close();
         }
-        $stmt_user->close();
     }
 }
 

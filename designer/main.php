@@ -23,36 +23,26 @@ $condb->set_charset("utf8mb4");
 
 // ดึงข้อมูลผู้ใช้ปัจจุบัน
 $designer_id = $_SESSION['user_id'];
-
-// --- ดึงข้อมูลงานที่ได้รับมอบหมาย (Assigned Jobs) ---
-$assigned_jobs = [];
-$sql_assigned_jobs = "SELECT
-                        cjr.request_id AS post_id,
-                        cjr.title,
-                        cjr.description,
-                        cjr.budget AS price_range,
-                        cjr.posted_date,
-                        cjr.status AS job_status,
-                        u_client.first_name AS client_first_name,
-                        u_client.last_name AS client_last_name,
-                        jc.category_name
-                    FROM contracts AS c
-                    JOIN client_job_requests AS cjr ON c.request_id = cjr.request_id
-                    JOIN users AS u_client ON c.client_id = u_client.user_id
-                    LEFT JOIN job_categories AS jc ON cjr.category_id = jc.category_id
-                    WHERE c.designer_id = ? AND c.contract_status = 'active'";
-
-$stmt_assigned = $condb->prepare($sql_assigned_jobs);
-$stmt_assigned->bind_param("i", $designer_id);
-$stmt_assigned->execute();
-$result_assigned_jobs = $stmt_assigned->get_result();
-if ($result_assigned_jobs) {
-    $assigned_jobs = $result_assigned_jobs->fetch_all(MYSQLI_ASSOC);
-} else {
-    error_log("SQL Error (assigned_jobs): " . $condb->error);
+$loggedInUserName = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Designer';
+// --- ดึงชื่อผู้ใช้ที่ล็อกอิน ---
+if (isset($_SESSION['user_id'])) {
+    $loggedInUserName = $_SESSION['username'] ?? $_SESSION['full_name'] ?? '';
+    if (empty($loggedInUserName)) {
+        $user_id = $_SESSION['user_id'];
+        $sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+        $stmt_user = $condb->prepare($sql_user);
+        if ($stmt_user) {
+            $stmt_user->bind_param("i", $user_id);
+            $stmt_user->execute();
+            $result_user = $stmt_user->get_result();
+            if ($result_user->num_rows === 1) {
+                $user_info = $result_user->fetch_assoc();
+                $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
+            }
+            $stmt_user->close();
+        }
+    }
 }
-$stmt_assigned->close();
-
 // --- ดึงข้อมูลประกาศรับงานจากดีไซเนอร์อื่น ---
 $job_postings_from_others = [];
 $sql_job_postings = "SELECT
@@ -80,22 +70,6 @@ if ($result_job_postings) {
     error_log("SQL Error (job_postings_from_others): " . $condb->error);
 }
 
-
-// --- ดึงชื่อผู้ใช้ที่ล็อกอิน ---
-$loggedInUserName = '';
-$user_id = $_SESSION['user_id'];
-$sql_user = "SELECT first_name, last_name FROM users WHERE user_id = ?";
-$stmt_user = $condb->prepare($sql_user);
-if ($stmt_user) {
-    $stmt_user->bind_param("i", $user_id);
-    $stmt_user->execute();
-    $result_user = $stmt_user->get_result();
-    if ($result_user->num_rows === 1) {
-        $user_info = $result_user->fetch_assoc();
-        $loggedInUserName = $user_info['first_name'] . ' ' . $user_info['last_name'];
-    }
-    $stmt_user->close();
-}
 
 $condb->close();
 
@@ -136,43 +110,6 @@ $condb->close();
         </div>
     </header>
 
-    <section id="assigned-jobs" class="py-12 md:py-16 bg-gradient-to-br from-blue-50 to-gray-50">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 md:mb-10">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800 mb-4 sm:mb-0 text-center sm:text-left text-gradient">งานที่ได้รับมอบหมาย</h2>
-                <a href="job_listings.php?type=assigned" class="btn-secondary px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium text-sm md:text-base">
-                    ดูทั้งหมด <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-
-            <?php if (empty($assigned_jobs)): ?>
-                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg relative text-center">
-                    <span class="block sm:inline">ยังไม่มีงานที่ได้รับมอบหมายในขณะนี้</span>
-                </div>
-            <?php else: ?>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    <?php foreach ($assigned_jobs as $job): ?>
-                        <div class="card-item">
-                            <img src="https://source.unsplash.com/400x250/?design-project,<?= urlencode($job['category_name'] ?? 'graphic-design') ?>" alt="งานที่ได้รับมอบหมาย: <?= htmlspecialchars($job['title']) ?>" class="card-image" onerror="this.onerror=null;this.src='../dist/img/pdpa02.jpg';">
-                            <div class="p-4 md:p-6 flex-grow flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-lg md:text-xl font-semibold text-gray-900 mb-1 md:mb-2 line-clamp-2"><?= htmlspecialchars($job['title']) ?></h3>
-                                    <p class="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">ผู้ว่าจ้าง: <span class="font-medium text-blue-700"><?= htmlspecialchars($job['client_first_name'] . ' ' . $job['client_last_name']) ?></span></p>
-                                    <p class="text-xs md:text-sm text-gray-500 mb-2 md:mb-4"><i class="fas fa-tag mr-1 text-blue-500"></i> หมวดหมู่: <span class="font-normal"><?= htmlspecialchars($job['category_name'] ?? 'ไม่ระบุ') ?></span></p>
-                                    <p class="text-sm md:text-base text-gray-700 mb-2 md:mb-4 line-clamp-3 font-light"><?= htmlspecialchars($job['description']) ?></p>
-                                </div>
-                                <div class="mt-2 md:mt-4">
-                                    <p class="text-base md:text-lg font-semibold text-green-700 mb-1 md:mb-2">สถานะ: <span class="text-blue-600"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $job['job_status']))) ?></span></p>
-                                    <p class="text-xs text-gray-500 mb-2 md:mb-4">มอบหมายเมื่อ: <span class="font-light"><?= date('d M Y', strtotime($job['posted_date'])) ?></span></p>
-                                    <a href="../job_detail.php?id=<?= $job['post_id'] ?>&type=request" class="btn-primary px-4 py-2 sm:px-5 sm:py-2 rounded-lg font-medium shadow-lg">ดูรายละเอียด <i class="fas fa-arrow-right ml-1"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
 
     <section id="available-jobs" class="py-12 md:py-16 bg-white">
         <div class="container mx-auto px-4 md:px-6">
